@@ -183,7 +183,7 @@ async def search_places(query: str, limit: int = 8) -> list[dict]:
         if rows:
             _cache_set(key, rows)
             return rows
-    except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, RuntimeError) as exc:
         nominatim_error = exc
 
     try:
