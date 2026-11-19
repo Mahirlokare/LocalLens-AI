@@ -14,7 +14,7 @@ VALHALLA_COSTING = {
 }
 HEADERS = {
     "User-Agent": "LocalLensAI/0.2 (India neighbourhood research application)",
-    "X-Client-Id": "locallens-ai.github.io",
+    "X-Client-Id": "locallens-ai-frontend.onrender.com",
     "Accept": "application/json",
 }
 
