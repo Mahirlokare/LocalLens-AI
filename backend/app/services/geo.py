@@ -14,6 +14,7 @@ VALHALLA_COSTING = {
 }
 HEADERS = {
     "User-Agent": "LocalLensAI/0.2 (India neighbourhood research application)",
+    "X-Client-Id": "locallens-ai.github.io",
     "Accept": "application/json",
 }
 
@@ -67,7 +68,7 @@ async def estimate_route(
             {"lat": destination_lat, "lon": destination_lon},
         ],
         "costing": VALHALLA_COSTING[mode],
-        "units": "kilometers",
+        "units": "km",
         "shape_format": "polyline6",
         "directions_options": {"units": "kilometers"},
     }
