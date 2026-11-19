@@ -53,7 +53,7 @@ async def estimate_route(
     destination_lat: float,
     mode: str,
 ) -> dict:
-    """Request a real OSM route for driving, cycling or walking.
+    """Request a real OSM route for an enabled vehicle, cycle or walking profile.
 
     Motorcycle and motor-scooter profiles use their own Valhalla costing
     models. Public-transport itineraries need configured GTFS feeds and are
