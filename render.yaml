@@ -13,11 +13,11 @@ services:
       - key: CORS_ORIGINS
         value: https://locallens-ai-web.onrender.com,https://locallens-ai.pages.dev
 
-staticSites:
-  - name: locallens-ai-web
+  - type: static
+    name: locallens-ai-web
     rootDir: frontend
     buildCommand: npm ci && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://locallens-ai-api-1sgb.onrender.com/v1
