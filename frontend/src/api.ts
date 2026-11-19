@@ -7,6 +7,7 @@ async function request<T>(path:string,init?:RequestInit):Promise<T>{const r=awai
 export const api={
  neighbourhoods:(q="")=>request<{items:Neighbourhood[];data_status:string;notice:string}>(`/neighbourhoods${q?`?q=${encodeURIComponent(q)}`:""}`),
  searchPlaces:(q:string)=>request<Place[]>(`/places/search?q=${encodeURIComponent(q)}`),
+ suggestPlaces:(q:string)=>request<Place[]>(`/places/suggest?q=${encodeURIComponent(q)}`),
  score:(neighbourhoods:unknown[],weights:Record<string,number>)=>request<{scores:Array<{name:string;score:number;coverage:number;indicators_missing:string[]}>;methodology:string;disclaimer:string}>("/comparisons/score",{method:"POST",body:JSON.stringify({neighbourhoods,weights})}),
  commute:(origin:Place,destination:Place,mode:string)=>request<RouteResult>("/commute/estimate",{method:"POST",body:JSON.stringify({origin_lat:origin.latitude,origin_lon:origin.longitude,destination_lat:destination.latitude,destination_lon:destination.longitude,mode})})
 };
