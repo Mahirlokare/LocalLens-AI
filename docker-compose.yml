@@ -1,0 +1,15 @@
+services:
+  api:
+    build: ./backend
+    ports: ["8000:8000"]
+    environment:
+      APP_NAME: LocalLens AI
+      APP_ENV: development
+    restart: unless-stopped
+  web:
+    build: ./frontend
+    ports: ["5173:5173"]
+    environment:
+      VITE_API_URL: http://localhost:8000/v1
+    depends_on: [api]
+    restart: unless-stopped
