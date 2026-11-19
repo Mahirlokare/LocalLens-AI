@@ -21,6 +21,7 @@ The frontend and backend are deployed on Render's free services. The backend may
 - Comparison export downloads a structured JSON report and opens the browser print dialog for PDF printing.
 - OpenStreetMap Nominatim place search and Valhalla driving, cycling and walking route estimates with route geometry.
 - Pytest smoke/scoring tests, Dockerfiles, Docker Compose and GitHub Actions backend test workflow.
+- Community locality submissions: signed-in users can add an unlisted locality with descriptive details and an optional source note. The record is stored in Supabase, shown in the catalogue, and can be geocoded for a map marker. Community-submitted details are labelled unverified and should be independently checked.
 
 **Remaining scope:** public-transport journey planning needs validated city/agency GTFS feeds; a generative-AI assistant needs an approved model provider and budget; the current neighbourhood catalogue is not a nationwide verified dataset. Email sign-in requires the deployed frontend URL to be allow-listed in Supabase Authentication → URL Configuration. The export creates a JSON file and invokes the browser print dialog; choose “Save as PDF” for a PDF copy.
 
