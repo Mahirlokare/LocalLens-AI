@@ -51,3 +51,36 @@ def test_supported_modes_map_to_distinct_valhalla_costing_profiles():
         "cycling": "bicycle",
         "walking": "pedestrian",
     }
+
+
+def test_photon_results_are_normalised_and_foreign_results_filtered():
+    from app.services.geo import _normalise_photon
+
+    payload = {
+        "features": [
+            {
+                "properties": {
+                    "name": "Kharghar", "city": "Navi Mumbai",
+                    "state": "Maharashtra", "country": "India",
+                    "countrycode": "IN", "type": "suburb",
+                },
+                "geometry": {"coordinates": [73.069, 19.048]},
+            },
+            {
+                "properties": {"name": "Kharghar", "country": "Nepal", "countrycode": "np"},
+                "geometry": {"coordinates": [84.0, 28.0]},
+            },
+        ]
+    }
+    rows = _normalise_photon(payload)
+    assert len(rows) == 1
+    assert rows[0]["display_name"] == "Kharghar, Navi Mumbai, Maharashtra, India"
+    assert rows[0]["latitude"] == 19.048
+    assert rows[0]["longitude"] == 73.069
+
+
+def test_places_suggest_endpoint_exists():
+    response = client.get("/v1/places/suggest", params={"q": "Kharghar, India"})
+    # A 200 is expected when Photon is reachable; provider outages are a
+    # controlled 502 rather than an unhandled server error.
+    assert response.status_code in (200, 502)
