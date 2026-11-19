@@ -52,3 +52,24 @@ Open http://localhost:5173.
 From repository root: `docker compose up --build`.
 
 See [deployment and production checklist](docs/DEPLOYMENT.md).
+
+
+## India-wide maps and route planning
+
+- The map opens at an India-wide extent and can be zoomed and panned across the country.
+- Place lookup uses OpenStreetMap Nominatim with the India country filter.
+- Walking, cycling and driving route estimates use the Valhalla routing engine on OpenStreetMap data.
+- Route geometry is drawn on the Leaflet map.
+- Public transport is intentionally not enabled until verified city/agency GTFS timetable feeds are configured. Coverage must be validated city by city; the application must not invent bus, metro or rail itineraries.
+- OpenStreetMap Nominatim and the public Valhalla demo endpoint are community services with fair-use limits. They do not guarantee uptime, live traffic, road completeness or production-scale capacity.
+
+### Supported journey modes
+
+| Mode | Current integration | Important limitation |
+|---|---|---|
+| Driving | Valhalla `auto` | Estimated mapped-road route; no live traffic |
+| Cycling | Valhalla `bicycle` | Depends on mapped cycle access and path data |
+| Walking | Valhalla `pedestrian` | Depends on mapped footpaths and access tags |
+| Public transport | Not enabled | Requires verified GTFS feeds and city-by-city coverage |
+
+The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality.
