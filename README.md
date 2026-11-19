@@ -16,12 +16,13 @@ The frontend and backend are deployed on Render's free services. The backend may
 ## Current implementation
 - React + TypeScript + Vite frontend with neighbourhood search, up-to-three-area comparison, commute planner and interactive OpenStreetMap view.
 - FastAPI backend with health, neighbourhood catalogue, comparison scoring, place search and commute estimate endpoints.
-- Weighted scoring with explicit handling and reporting of missing indicators.
-- Supabase Postgres catalogue with row-level security; anonymous read access is limited to public neighbourhood and indicator data.
-- OpenStreetMap Nominatim place search and OSRM demo route estimates.
+- Weighted comparison scoring is now connected to the dashboard; users can adjust criterion weights and see data coverage and missing indicators.
+- Supabase Postgres catalogue with row-level security; email magic-link sign-in, private saved comparisons and account-scoped retrieval are integrated in the frontend.
+- Comparison export downloads a structured JSON report and opens the browser print dialog for PDF printing.
+- OpenStreetMap Nominatim place search and Valhalla driving, cycling and walking route estimates with route geometry.
 - Pytest smoke/scoring tests, Dockerfiles, Docker Compose and GitHub Actions backend test workflow.
 
-**MVP scope:** authentication, saved-comparison UI, downloadable reports and a generative-AI assistant are not yet shipped. The database has a user-scoped saved-comparisons table, but the frontend does not yet expose it.
+**Remaining scope:** public-transport journey planning needs validated city/agency GTFS feeds; a generative-AI assistant needs an approved model provider and budget; the current neighbourhood catalogue is not a nationwide verified dataset. Email sign-in requires the deployed frontend URL to be allow-listed in Supabase Authentication → URL Configuration. The export creates a JSON file and invokes the browser print dialog; choose “Save as PDF” for a PDF copy.
 
 **Data warning:** built-in Kharghar, Panvel and Kamothe indicator scores are illustrative demo values, not verified local measurements. Do not use them as factual area ratings.
 
