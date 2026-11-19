@@ -79,8 +79,16 @@ def test_photon_results_are_normalised_and_foreign_results_filtered():
     assert rows[0]["longitude"] == 73.069
 
 
-def test_places_suggest_endpoint_exists():
+def test_places_suggest_endpoint_exists(monkeypatch):
+    async def fake_suggest(_query):
+        return [{
+            "display_name": "Kharghar, Navi Mumbai, Maharashtra, India",
+            "latitude": 19.048,
+            "longitude": 73.069,
+            "category": "suburb",
+        }]
+
+    monkeypatch.setattr("app.api.routes.places.suggest_places", fake_suggest)
     response = client.get("/v1/places/suggest", params={"q": "Kharghar, India"})
-    # A 200 is expected when Photon is reachable; provider outages are a
-    # controlled 502 rather than an unhandled server error.
-    assert response.status_code in (200, 502)
+    assert response.status_code == 200
+    assert response.json()[0]["display_name"].startswith("Kharghar")
