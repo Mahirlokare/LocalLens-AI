@@ -47,3 +47,7 @@
 
 /* Return-journey ride booking links. */
 .ride-booking-panel{display:grid;gap:12px;margin-top:14px;padding:18px;border:1px solid #e1e7ed;background:#fbfcfd;border-radius:10px}.ride-booking-panel>div:first-child b{font:700 14px Manrope;color:#314256}.ride-booking-panel p{font-size:11px;color:#718094;line-height:1.55;margin:6px 0 0}.ride-booking-panel>small{font-size:10px;color:#8793a1;line-height:1.5}.ride-links{border-top:0;padding-top:0}.ride-links a{min-height:42px}
+
+
+/* Additional intercity travel booking providers. */
+.travel-booking-panel{display:grid;gap:13px;margin-top:14px;padding:18px;border:1px solid #e1e7ed;background:#fbfcfd;border-radius:10px}.travel-booking-panel>div:first-child>b{font:700 14px Manrope;color:#314256}.travel-booking-panel p{font-size:11px;color:#718094;line-height:1.55;margin:6px 0 0}.travel-booking-panel>small{font-size:10px;color:#8793a1;line-height:1.5}.travel-booking-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.booking-group{display:grid;align-content:start;gap:7px;padding:12px;border:1px solid #e3e9dc;border-radius:8px;background:#fff}.booking-group>b{font:700 11px Manrope;color:#46563b;margin-bottom:2px}.booking-group a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;border:1px solid #edf0e9;border-radius:6px;color:#526c39;text-decoration:none;font-size:10px;line-height:1.4}.booking-group a:hover{border-color:#a9c77d;background:#fbfdf8}@media(max-width:650px){.travel-booking-grid{grid-template-columns:1fr}}
