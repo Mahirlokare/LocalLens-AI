@@ -1,6 +1,6 @@
 export const API_BASE=(import.meta.env.VITE_API_URL||"https://locallens-ai-api-1sgb.onrender.com/v1").replace(/\/$/,"");
 export type Indicator={value:number;source:string;observed_at:string};
-export type Neighbourhood={id:string;name:string;city:string;latitude:number;longitude:number;description:string;indicators:Record<string,Indicator>};
+export type Neighbourhood={id:string;name:string;city:string;latitude:number|null;longitude:number|null;description:string;indicators:Record<string,Indicator>};
 export type Place={display_name:string;latitude:number;longitude:number;category?:string};
 export type RouteResult={distance_km:number;duration_minutes:number;mode:string;geometry:string;provider:string;disclaimer:string};
 async function request<T>(path:string,init?:RequestInit):Promise<T>{const r=await fetch(API_BASE+path,{...init,headers:{"Content-Type":"application/json",...init?.headers}});if(!r.ok){const b=await r.json().catch(()=>({}));throw new Error(b.detail||`Request failed (${r.status})`)}return r.json() as Promise<T>}
