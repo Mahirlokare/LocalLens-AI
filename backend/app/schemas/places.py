@@ -14,7 +14,7 @@ class CommuteRequest(BaseModel):
     origin_lon: float = Field(ge=-180, le=180)
     destination_lat: float = Field(ge=-90, le=90)
     destination_lon: float = Field(ge=-180, le=180)
-    mode: str = Field(default="driving", pattern="^(driving|cycling|walking)$")
+    mode: str = Field(default="driving", pattern="^(driving|motorcycle|scooter|cycling|walking)$")
 
 
 class CommuteResponse(BaseModel):
