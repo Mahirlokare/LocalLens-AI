@@ -1,10 +1,17 @@
-"""India-focused place search and multi-profile OpenStreetMap routing.
+"""India-focused geocoding with provider fallback and OSM routing.
 
-Nominatim and the public Valhalla demo are community services. They are
-appropriate for a prototype, not a high-volume production SLA.
+Photon is used for interactive suggestions because Nominatim explicitly
+prohibits client-side autocomplete. Explicit searches may fall back to
+Nominatim, respecting its one-request-per-second application-wide limit.
+Both public community endpoints are best-effort services, not an SLA.
 """
+import asyncio
+import time
+from typing import Any
+
 import httpx
 
+PHOTON_URL = "https://photon.komoot.io/api/"
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 VALHALLA_URL = "https://valhalla1.openstreetmap.de/route"
 VALHALLA_COSTING = {
@@ -15,14 +22,73 @@ VALHALLA_COSTING = {
     "walking": "pedestrian",
 }
 HEADERS = {
-    "User-Agent": "LocalLensAI/0.2 (India neighbourhood research application)",
+    "User-Agent": "LocalLensAI/0.3 (https://locallens-ai-frontend.onrender.com; India place and commute search)",
     "X-Client-Id": "locallens-ai-frontend.onrender.com",
     "Accept": "application/json",
 }
+_CACHE_TTL_SECONDS = 60 * 60 * 24
+_search_cache: dict[str, tuple[float, list[dict[str, Any]]]] = {}
+_nominatim_lock = asyncio.Lock()
+_last_nominatim_request = 0.0
 
 
-async def search_places(query: str, limit: int = 8) -> list[dict]:
-    """Search all Indian states and union territories using OSM Nominatim."""
+def _cache_get(key: str) -> list[dict[str, Any]] | None:
+    cached = _search_cache.get(key)
+    if cached and time.monotonic() - cached[0] < _CACHE_TTL_SECONDS:
+        return cached[1]
+    if cached:
+        _search_cache.pop(key, None)
+    return None
+
+
+def _cache_set(key: str, rows: list[dict[str, Any]]) -> None:
+    # Keep the in-process cache bounded on the free single-instance service.
+    if len(_search_cache) > 1000:
+        oldest = min(_search_cache, key=lambda item: _search_cache[item][0])
+        _search_cache.pop(oldest, None)
+    _search_cache[key] = (time.monotonic(), rows)
+
+
+def _normalise_photon(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    results = []
+    for feature in payload.get("features", []):
+        props = feature.get("properties") or {}
+        coords = (feature.get("geometry") or {}).get("coordinates") or []
+        if len(coords) < 2:
+            continue
+        # Photon countrycode is ISO-3166-1 alpha-2. Do not leak foreign matches.
+        country_code = str(props.get("countrycode") or "").lower()
+        country = str(props.get("country") or "").lower()
+        if country_code and country_code != "in":
+            continue
+        if not country_code and country and country not in {"india", "भारत"}:
+            continue
+        parts = [
+            props.get("name"), props.get("street"), props.get("district"),
+            props.get("city"), props.get("state"), props.get("country"),
+        ]
+        display_name = ", ".join(dict.fromkeys(str(part).strip() for part in parts if part))
+        if not display_name:
+            display_name = "India place"
+        results.append({
+            "display_name": display_name,
+            "latitude": float(coords[1]),
+            "longitude": float(coords[0]),
+            "category": props.get("type") or props.get("osm_value"),
+        })
+    return results
+
+
+async def _photon_search(query: str, limit: int) -> list[dict[str, Any]]:
+    params = {"q": query, "limit": limit, "lang": "en", "countrycode": "in"}
+    async with httpx.AsyncClient(timeout=12, headers=HEADERS) as client:
+        response = await client.get(PHOTON_URL, params=params)
+        response.raise_for_status()
+        return _normalise_photon(response.json())
+
+
+async def _nominatim_search(query: str, limit: int) -> list[dict[str, Any]]:
+    global _last_nominatim_request
     params = {
         "q": query,
         "format": "jsonv2",
@@ -30,11 +96,17 @@ async def search_places(query: str, limit: int = 8) -> list[dict]:
         "addressdetails": 1,
         "countrycodes": "in",
     }
-    async with httpx.AsyncClient(timeout=15, headers=HEADERS) as client:
-        response = await client.get(NOMINATIM_URL, params=params)
-        response.raise_for_status()
-        rows = response.json()
-
+    # The public Nominatim policy sets a hard maximum of one request/second
+    # for the whole application. The lock serialises requests on this instance.
+    async with _nominatim_lock:
+        wait = 1.0 - (time.monotonic() - _last_nominatim_request)
+        if wait > 0:
+            await asyncio.sleep(wait)
+        async with httpx.AsyncClient(timeout=12, headers=HEADERS) as client:
+            response = await client.get(NOMINATIM_URL, params=params)
+            _last_nominatim_request = time.monotonic()
+            response.raise_for_status()
+            rows = response.json()
     return [
         {
             "display_name": row.get("display_name", "Unknown place"),
@@ -46,6 +118,41 @@ async def search_places(query: str, limit: int = 8) -> list[dict]:
     ]
 
 
+async def suggest_places(query: str, limit: int = 6) -> list[dict]:
+    """Interactive suggestions use Photon only; Nominatim autocomplete is prohibited."""
+    key = "suggest:" + query.strip().casefold()
+    cached = _cache_get(key)
+    if cached is not None:
+        return cached
+    rows = await _photon_search(query, limit)
+    _cache_set(key, rows)
+    return rows
+
+
+async def search_places(query: str, limit: int = 8) -> list[dict]:
+    """Search India via Photon, falling back to Nominatim for explicit searches."""
+    key = "search:" + query.strip().casefold()
+    cached = _cache_get(key)
+    if cached is not None:
+        return cached
+    photon_error: Exception | None = None
+    try:
+        rows = await _photon_search(query, limit)
+        if rows:
+            _cache_set(key, rows)
+            return rows
+    except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+        photon_error = exc
+    try:
+        rows = await _nominatim_search(query, limit)
+        _cache_set(key, rows)
+        return rows
+    except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+        if photon_error:
+            raise RuntimeError("Both India place-search providers are unavailable.") from exc
+        raise
+
+
 async def estimate_route(
     origin_lon: float,
     origin_lat: float,
@@ -53,12 +160,7 @@ async def estimate_route(
     destination_lat: float,
     mode: str,
 ) -> dict:
-    """Request a real OSM route for an enabled vehicle, cycle or walking profile.
-
-    Motorcycle and motor-scooter profiles use their own Valhalla costing
-    models. Public-transport itineraries need configured GTFS feeds and are
-    not fabricated here; unsupported modes are rejected explicitly.
-    """
+    """Request a real OSM route for an enabled vehicle, cycle or walking profile."""
     if mode not in VALHALLA_COSTING:
         raise ValueError(
             "Public transport routing is not enabled: verified Indian city "
@@ -88,7 +190,6 @@ async def estimate_route(
         message = payload.get("error") or "No route was returned."
         raise ValueError(str(message))
 
-    # Valhalla returns distance in the requested units and time in seconds.
     return {
         "distance_km": round(float(summary["length"]), 2),
         "duration_minutes": round(float(summary["time"]) / 60, 1),
