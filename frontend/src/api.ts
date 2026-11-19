@@ -1,4 +1,4 @@
-export const API_BASE=(import.meta.env.VITE_API_URL||"http://localhost:8000/v1").replace(/\/$/,"");
+export const API_BASE=(import.meta.env.VITE_API_URL||"https://locallens-ai-api-1sgb.onrender.com/v1").replace(/\/$/,"");
 export type Indicator={value:number;source:string;observed_at:string};
 export type Neighbourhood={id:string;name:string;city:string;latitude:number;longitude:number;description:string;indicators:Record<string,Indicator>};
 export type Place={display_name:string;latitude:number;longitude:number;category?:string};
