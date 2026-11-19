@@ -45,7 +45,7 @@ From repository root run `docker compose up --build`.
 
 ## External providers and production readiness
 
-Place search uses OpenStreetMap Nominatim; route estimates use the public OSRM demo server; maps use OpenStreetMap tiles. These public endpoints have usage policies, rate limits and no production availability guarantee. Do not load-test them or treat them as unrestricted commercial infrastructure. Before a high-traffic public launch, select contracted or self-hosted providers, implement caching/rate limits, and preserve required attribution.
+Place search uses OpenStreetMap Nominatim; route estimates use the public Valhalla demo service; maps use OpenStreetMap tiles. These public endpoints have usage policies, rate limits and no production availability guarantee. Do not load-test them or treat them as unrestricted commercial infrastructure. Before a high-traffic public launch, select contracted or self-hosted providers, implement caching/rate limits, and preserve required attribution. The current route profiles are car (`auto`), motorcycle (`motorcycle`, beta), scooter/moped (`motor_scooter`), bicycle (`bicycle`) and walking (`pedestrian`). Public-transport timetables are not configured.
 
 The neighbourhood catalogue contains illustrative sample scores only. Replace them with verified and licensed datasets before presenting real-world assessments. Do not interpret the illustrative index as an official neighbourhood rating.
 
