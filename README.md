@@ -19,7 +19,7 @@ The frontend and backend are deployed on Render's free services. The backend may
 - Weighted comparison scoring is now connected to the dashboard; users can adjust criterion weights and see data coverage and missing indicators.
 - Supabase Postgres catalogue with row-level security; email magic-link sign-in, private saved comparisons and account-scoped retrieval are integrated in the frontend.
 - Comparison export downloads a structured JSON report and opens the browser print dialog for PDF printing.
-- OpenStreetMap Nominatim place search and Valhalla driving, cycling and walking route estimates with route geometry.
+- OpenStreetMap Nominatim place search and Valhalla car, motorcycle, scooter/moped, bicycle and walking route estimates with route geometry.
 - Pytest smoke/scoring tests, Dockerfiles, Docker Compose and GitHub Actions backend test workflow.
 - Community locality submissions: signed-in users can add an unlisted locality with descriptive details and an optional source note. The record is stored in Supabase, shown in the catalogue, and can be geocoded for a map marker. Community-submitted details are labelled unverified and should be independently checked.
 
@@ -69,9 +69,11 @@ See [deployment and production checklist](docs/DEPLOYMENT.md).
 
 | Mode | Current integration | Important limitation |
 |---|---|---|
-| Driving | Valhalla `auto` | Estimated mapped-road route; no live traffic |
-| Cycling | Valhalla `bicycle` | Depends on mapped cycle access and path data |
+| Car / driving | Valhalla `auto` | Estimated mapped-road route; no live traffic |
+| Motorcycle | Valhalla `motorcycle` (beta profile) | Depends on mapped access; beta costing profile |
+| Scooter / moped | Valhalla `motor_scooter` | Depends on mapped scooter/moped access tags |
+| Bicycle | Valhalla `bicycle` | Depends on mapped cycle access and path data |
 | Walking | Valhalla `pedestrian` | Depends on mapped footpaths and access tags |
-| Public transport | Not enabled | Requires verified GTFS feeds and city-by-city coverage |
+| Public transport (bus, metro, train) | Not enabled | Requires verified GTFS feeds and city-by-city coverage; no timetable itineraries yet |
 
 The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality.
