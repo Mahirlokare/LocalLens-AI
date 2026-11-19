@@ -61,8 +61,8 @@ See [deployment and production checklist](docs/DEPLOYMENT.md).
 - The map opens at an India-wide extent and can be zoomed and panned across the country.
 - Place lookup uses OpenStreetMap Nominatim with the India country filter.
 - Walking, cycling and driving route estimates use the Valhalla routing engine on OpenStreetMap data.
-- Public transport handoff: selecting bus / metro / train opens a pre-filled Google Maps transit directions search between the selected coordinates. It shows provider-supported options and any fare information Google exposes; LocalLens does not fabricate transit routes, live timetables or fares.
-- Transit ticket and fare resources are linked in the commute planner, including Chalo, Mumbai One, Mumbai Metro One, Maha Mumbai Metro, Mumbai Metro Line 3, IRCTC and Indian Railways enquiry.
+- Public transport handoff: selecting bus / metro / train opens a pre-filled Google Maps transit directions search between the selected coordinates. It shows provider-supported options and any fare information Google exposes; LocalLens does not fabricate transit routes, live timetables or fares. The Explore fallback search is India-wide (not Maharashtra-only), and newly discovered localities retain their OpenStreetMap location context rather than being incorrectly labelled Mumbai.
+- Transit ticket and fare resources are linked in the commute planner, including Chalo, Mumbai One, Mumbai Metro One, Maha Mumbai Metro, Mumbai Metro Line 3, IRCTC and Indian Railways enquiry. A return-ride panel links to Uber (with return locations prefilled where supported), Ola and Rapido; these links open provider booking flows and do not book or guarantee a ride.
 - Route geometry is drawn on the Leaflet map.
 - In-app public transport routing with independently computed timetable paths is not enabled because validated GTFS feeds are not configured. Instead, users are handed off to Google Maps Transit for supported live itinerary search. Availability and fare display depend on the provider and city.
 - OpenStreetMap Nominatim and the public Valhalla demo endpoint are community services with fair-use limits. They do not guarantee uptime, live traffic, road completeness or production-scale capacity.
@@ -78,4 +78,4 @@ See [deployment and production checklist](docs/DEPLOYMENT.md).
 | Walking | Valhalla `pedestrian` | Depends on mapped footpaths and access tags |
 | Public transport (bus, metro, train) | Google Maps Transit handoff | Itinerary, schedule and fares are provider-supplied; no native GTFS engine or fare calculation in LocalLens |
 
-The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality.
+The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality. Return-ride links are booking-provider handoffs only; users must review pickup/drop-off, availability and final prices in the provider app.
