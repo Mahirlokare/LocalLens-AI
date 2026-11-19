@@ -51,4 +51,4 @@ The neighbourhood catalogue contains illustrative sample scores only. Replace th
 
 The Supabase project stores neighbourhoods, indicators and user-scoped saved-comparison records. Row-level security is enabled; anonymous users can read the public catalogue, while saved comparisons are restricted to their authenticated owner. The current UI does not yet expose every database capability.
 
-Before a production-grade public launch, complete authentication and saved-comparison UI, source-verified neighbourhood metrics, privacy/terms pages, monitoring, backups, accessibility and security review. Set exact allowed frontend origins in backend CORS. Build frontend using `npm run build`.
+Before a production-grade public launch, complete authentication and saved-comparison UI, downloadable reports, a grounded generative-AI assistant (which requires an explicitly configured model provider and API credential), source-verified neighbourhood metrics, privacy/terms pages, monitoring, backups, accessibility and security review. Set exact allowed frontend origins in backend CORS. Build frontend using `npm run build`.
