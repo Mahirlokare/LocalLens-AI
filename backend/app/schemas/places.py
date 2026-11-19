@@ -1,4 +1,4 @@
-"""Schemas for geocoding and commute estimates."""
+"""Schemas for India-wide place search and route estimates."""
 from pydantic import BaseModel, Field
 
 
@@ -21,5 +21,6 @@ class CommuteResponse(BaseModel):
     distance_km: float
     duration_minutes: float
     mode: str
+    geometry: str = ""
     provider: str
     disclaimer: str
