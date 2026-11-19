@@ -156,7 +156,7 @@ async def suggest_places(query: str, limit: int = 6) -> list[dict]:
         if rows:
             _cache_set(key, rows)
             return rows
-    except (httpx.HTTPError, ValueError, KeyError, TypeError):
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, RuntimeError):
         pass
     rows = await _open_meteo_search(query, limit)
     _cache_set(key, rows)
@@ -175,7 +175,7 @@ async def search_places(query: str, limit: int = 8) -> list[dict]:
         if rows:
             _cache_set(key, rows)
             return rows
-    except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, RuntimeError) as exc:
         photon_error = exc
     nominatim_error: Exception | None = None
     try:
