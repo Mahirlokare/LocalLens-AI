@@ -11,4 +11,17 @@ services:
       - key: APP_ENV
         value: production
       - key: CORS_ORIGINS
-        value: https://locallens-ai.pages.dev
+        value: https://locallens-ai-web.onrender.com,https://locallens-ai.pages.dev
+
+staticSites:
+  - name: locallens-ai-web
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://locallens-ai-api-1sgb.onrender.com/v1
+      - key: VITE_SUPABASE_URL
+        value: https://rdgeiolxvbojassxhezh.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
+        value: sb_publishable_iqzUL5eiPT7AZ63tMYsyLg_fvYBLhgK
