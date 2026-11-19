@@ -11,4 +11,4 @@ services:
       - key: APP_ENV
         value: production
       - key: CORS_ORIGINS
-        value: https://locallens-ai.pages.dev
+        value: https://locallens-ai-frontend.onrender.com,https://locallens-ai.pages.dev,http://localhost:5173,http://127.0.0.1:5173
