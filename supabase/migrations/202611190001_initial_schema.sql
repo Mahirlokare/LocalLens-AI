@@ -53,12 +53,12 @@ create policy "Public can read indicators" on public.indicators
 
 -- Users can only manage their own saved comparisons.
 create policy "Users read own comparisons" on public.saved_comparisons
-  for select to authenticated using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 create policy "Users create own comparisons" on public.saved_comparisons
-  for insert to authenticated with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 create policy "Users update own comparisons" on public.saved_comparisons
-  for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 create policy "Users delete own comparisons" on public.saved_comparisons
-  for delete to authenticated using (auth.uid() = user_id);
+  for delete to authenticated using ((select auth.uid()) = user_id);
 
 comment on table public.indicators is 'Every production indicator must cite a source and observation date. Illustrative values must be marked is_illustrative=true.';
