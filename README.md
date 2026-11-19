@@ -61,8 +61,10 @@ See [deployment and production checklist](docs/DEPLOYMENT.md).
 - The map opens at an India-wide extent and can be zoomed and panned across the country.
 - Place lookup uses OpenStreetMap Nominatim with the India country filter.
 - Walking, cycling and driving route estimates use the Valhalla routing engine on OpenStreetMap data.
+- Public transport handoff: selecting bus / metro / train opens a pre-filled Google Maps transit directions search between the selected coordinates. It shows provider-supported options and any fare information Google exposes; LocalLens does not fabricate transit routes, live timetables or fares.
+- Transit ticket and fare resources are linked in the commute planner, including Chalo, Mumbai One, Mumbai Metro One, Maha Mumbai Metro, Mumbai Metro Line 3, IRCTC and Indian Railways enquiry.
 - Route geometry is drawn on the Leaflet map.
-- Public transport is intentionally not enabled until verified city/agency GTFS timetable feeds are configured. Coverage must be validated city by city; the application must not invent bus, metro or rail itineraries.
+- In-app public transport routing with independently computed timetable paths is not enabled because validated GTFS feeds are not configured. Instead, users are handed off to Google Maps Transit for supported live itinerary search. Availability and fare display depend on the provider and city.
 - OpenStreetMap Nominatim and the public Valhalla demo endpoint are community services with fair-use limits. They do not guarantee uptime, live traffic, road completeness or production-scale capacity.
 
 ### Supported journey modes
@@ -74,6 +76,6 @@ See [deployment and production checklist](docs/DEPLOYMENT.md).
 | Scooter / moped | Valhalla `motor_scooter` | Depends on mapped scooter/moped access tags |
 | Bicycle | Valhalla `bicycle` | Depends on mapped cycle access and path data |
 | Walking | Valhalla `pedestrian` | Depends on mapped footpaths and access tags |
-| Public transport (bus, metro, train) | Not enabled | Requires verified GTFS feeds and city-by-city coverage; no timetable itineraries yet |
+| Public transport (bus, metro, train) | Google Maps Transit handoff | Itinerary, schedule and fares are provider-supplied; no native GTFS engine or fare calculation in LocalLens |
 
 The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality.
