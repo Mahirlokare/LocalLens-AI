@@ -4,6 +4,7 @@ from pydantic import ValidationError
 from fastapi.testclient import TestClient
 from app.main import app
 from app.schemas.places import CommuteRequest
+from app.services.geo import VALHALLA_COSTING
 
 client = TestClient(app)
 
@@ -40,3 +41,13 @@ def test_commute_request_rejects_unconfigured_transit_modes(mode):
             destination_lat=19.1, destination_lon=72.1,
             mode=mode,
         )
+
+
+def test_supported_modes_map_to_distinct_valhalla_costing_profiles():
+    assert VALHALLA_COSTING == {
+        "driving": "auto",
+        "motorcycle": "motorcycle",
+        "scooter": "motor_scooter",
+        "cycling": "bicycle",
+        "walking": "pedestrian",
+    }
