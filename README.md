@@ -27,7 +27,7 @@ The frontend and backend are deployed on Render's free services. The backend may
 
 **Data warning:** built-in Kharghar, Panvel and Kamothe indicator scores are illustrative demo values, not verified local measurements. Do not use them as factual area ratings.
 
-**Provider warning:** Nominatim, public OSRM demo routing and standard OSM tiles have usage policies and no production availability guarantee. Replace or self-host providers for a public production service, and retain required attribution.
+**Provider warning:** Nominatim, public Valhalla demo routing and standard OSM tiles have usage policies and no production availability guarantee. Replace or self-host providers for a public production service, and retain required attribution.
 
 ## Run locally
 
