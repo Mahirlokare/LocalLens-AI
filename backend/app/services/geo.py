@@ -14,6 +14,7 @@ import httpx
 PHOTON_URL = "https://photon.komoot.io/api/"
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 VALHALLA_URL = "https://valhalla1.openstreetmap.de/route"
+OPEN_METEO_GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 VALHALLA_COSTING = {
     "driving": "auto",
     "motorcycle": "motorcycle",  # Valhalla marks this profile as beta.
@@ -118,13 +119,46 @@ async def _nominatim_search(query: str, limit: int) -> list[dict[str, Any]]:
     ]
 
 
+async def _open_meteo_search(query: str, limit: int) -> list[dict[str, Any]]:
+    """Last-resort city/locality geocoder; this provider does not resolve street addresses."""
+    # Open-Meteo accepts a place name rather than a free-form address.
+    name = query.split(",")[0].strip()
+    if len(name) < 2:
+        return []
+    params = {"name": name, "count": limit, "language": "en", "format": "json"}
+    async with httpx.AsyncClient(timeout=10, headers=HEADERS) as client:
+        response = await client.get(OPEN_METEO_GEOCODING_URL, params=params)
+        response.raise_for_status()
+        payload = response.json()
+    rows = []
+    for item in payload.get("results") or []:
+        if str(item.get("country_code") or "").upper() != "IN":
+            continue
+        parts = [item.get("name"), item.get("admin2"), item.get("admin1"), item.get("country")]
+        display_name = ", ".join(dict.fromkeys(str(part).strip() for part in parts if part))
+        rows.append({
+            "display_name": display_name,
+            "latitude": float(item["latitude"]),
+            "longitude": float(item["longitude"]),
+            "category": item.get("feature_code"),
+        })
+    return rows
+
+
 async def suggest_places(query: str, limit: int = 6) -> list[dict]:
-    """Interactive suggestions use Photon only; Nominatim autocomplete is prohibited."""
+    """Interactive suggestions use Photon, with a city/locality fallback."""
     key = "suggest:" + query.strip().casefold()
     cached = _cache_get(key)
     if cached is not None:
         return cached
-    rows = await _photon_search(query, limit)
+    try:
+        rows = await _photon_search(query, limit)
+        if rows:
+            _cache_set(key, rows)
+            return rows
+    except (httpx.HTTPError, ValueError, KeyError, TypeError):
+        pass
+    rows = await _open_meteo_search(query, limit)
     _cache_set(key, rows)
     return rows
 
@@ -143,13 +177,22 @@ async def search_places(query: str, limit: int = 8) -> list[dict]:
             return rows
     except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
         photon_error = exc
+    nominatim_error: Exception | None = None
     try:
         rows = await _nominatim_search(query, limit)
+        if rows:
+            _cache_set(key, rows)
+            return rows
+    except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+        nominatim_error = exc
+
+    try:
+        rows = await _open_meteo_search(query, limit)
         _cache_set(key, rows)
         return rows
     except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
-        if photon_error:
-            raise RuntimeError("Both India place-search providers are unavailable.") from exc
+        if photon_error or nominatim_error:
+            raise RuntimeError("All India place-search providers are unavailable.") from exc
         raise
 
 
