@@ -4,6 +4,15 @@
 
 LocalLens AI is a full-stack decision-support application for exploring neighbourhoods, comparing transparent indicators, and estimating journeys between places.
 
+## Live deployment
+
+- **Frontend:** https://locallens-ai-frontend.onrender.com
+- **Backend API:** https://locallens-ai-api-1sgb.onrender.com
+- **API health:** https://locallens-ai-api-1sgb.onrender.com/health
+- **Interactive API docs:** https://locallens-ai-api-1sgb.onrender.com/docs
+
+The frontend and backend are deployed on Render's free services. The backend may spin down after inactivity and take a short time to wake up. Cloudflare Pages deployment remains an optional manual workflow and is not required for the live Render deployment.
+
 ## Current implementation
 - React + TypeScript + Vite frontend with responsive dashboard and interactive OpenStreetMap view.
 - FastAPI backend with health, neighbourhood catalogue, comparison scoring, place search and commute estimate endpoints.
