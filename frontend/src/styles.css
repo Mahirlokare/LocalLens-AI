@@ -43,3 +43,7 @@
 
 /* Public transport provider handoff and fare resources. */
 .transit-panel{display:grid;gap:12px;margin-top:20px;padding:18px;border:1px solid #dce8ce;background:#f8fbf3;border-radius:10px}.transit-panel>div b{font:700 14px Manrope;color:#314526}.transit-panel p{font-size:11px;color:#71806b;line-height:1.55;margin:6px 0 0}.transit-panel>.primary{justify-self:start;text-decoration:none}.transit-panel>small{font-size:10px;color:#87917e;line-height:1.5}.fare-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:12px;border-top:1px solid #e1e9d8}.fare-links>b{grid-column:1/-1;font:700 11px Manrope;color:#46563b}.fare-links a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid #e3e9dc;border-radius:7px;background:#fff;color:#526c39;text-decoration:none;font-size:10px;line-height:1.4}.fare-links a:hover{border-color:#a9c77d;background:#fbfdf8}@media(max-width:650px){.fare-links{grid-template-columns:1fr}}
+
+
+/* Return-journey ride booking links. */
+.ride-booking-panel{display:grid;gap:12px;margin-top:14px;padding:18px;border:1px solid #e1e7ed;background:#fbfcfd;border-radius:10px}.ride-booking-panel>div:first-child b{font:700 14px Manrope;color:#314256}.ride-booking-panel p{font-size:11px;color:#718094;line-height:1.55;margin:6px 0 0}.ride-booking-panel>small{font-size:10px;color:#8793a1;line-height:1.5}.ride-links{border-top:0;padding-top:0}.ride-links a{min-height:42px}
