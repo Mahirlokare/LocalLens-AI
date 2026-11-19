@@ -21,3 +21,16 @@
 .auth-panel{max-width:620px;margin-bottom:16px}.auth-panel .panel-head button{border:0;background:none;color:#748398;cursor:pointer}.auth-panel .place-field{padding-right:7px}.auth-panel .place-field input{padding:10px}.auth-panel .place-field button{white-space:nowrap}
 @media(max-width:900px){.weight-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.score-results{grid-template-columns:1fr}}
 @media print{.sidebar,.topbar,.search,.map-section,.toolbar,.weight-controls,.location,footer{display:none!important}main{margin:0}.content{max-width:none;padding:0}.panel{border:0}.shell{background:white}.notice{border:0}}
+
+/* Separate exploration and comparison workspaces; locality-only records stay unrated. */
+.compare-page .search span,.search span{font-size:10px;color:#8795a4;white-space:nowrap}
+.compare-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;max-height:230px;overflow:auto;padding:1px}
+.picker-item{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;border:1px solid #e5eaf0;background:white;border-radius:7px;padding:10px 11px;cursor:pointer;min-width:0}
+.picker-item span{min-width:0}.picker-item b,.picker-item small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.picker-item b{font-size:11px;color:#34465b}.picker-item small{font-size:9px;color:#8a97a5;margin-top:3px}.picker-item strong{font-size:9px;color:#6c8e3e;white-space:nowrap}.picker-item.picked{border-color:#9dc85c;background:#f7fbed}
+.empty-state,.data-pending{padding:16px;border:1px dashed #dce4d2;border-radius:8px;background:#fafcf7;color:#7b8793;font-size:11px;line-height:1.55}
+.data-pending b{font-size:11px;color:#687b4a}.data-pending p{margin:5px 0 0}
+.pending-score{font:700 13px Manrope!important;color:#8b97a2!important}
+.explore-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;color:#8491a0;font-size:10px}
+.cover:not(.cover-0):not(.cover-1):not(.cover-2){background-image:linear-gradient(180deg,#10203012,#102030bd),url('https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=700')}
+@media(max-width:1050px){.compare-picker{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.compare-picker{grid-template-columns:1fr}.explore-actions{align-items:flex-start;flex-direction:column}}
