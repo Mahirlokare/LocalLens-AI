@@ -9,6 +9,8 @@ NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 VALHALLA_URL = "https://valhalla1.openstreetmap.de/route"
 VALHALLA_COSTING = {
     "driving": "auto",
+    "motorcycle": "motorcycle",  # Valhalla marks this profile as beta.
+    "scooter": "motor_scooter",
     "cycling": "bicycle",
     "walking": "pedestrian",
 }
@@ -53,8 +55,9 @@ async def estimate_route(
 ) -> dict:
     """Request a real OSM route for driving, cycling or walking.
 
-    Public-transport itineraries need city/agency GTFS feeds. They are not
-    fabricated here; the API reports the mode as unsupported instead.
+    Motorcycle and motor-scooter profiles use their own Valhalla costing
+    models. Public-transport itineraries need configured GTFS feeds and are
+    not fabricated here; unsupported modes are rejected explicitly.
     """
     if mode not in VALHALLA_COSTING:
         raise ValueError(
