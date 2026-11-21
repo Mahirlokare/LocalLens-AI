@@ -63,7 +63,7 @@ async def recommend_localities(payload: AIRecommendationRequest) -> AIRecommenda
                     lines.append("  No structured indicator measurements are available.")
         lines.append("Budget fit cannot be assessed because verified rent or housing-cost data is not part of the current catalogue.")
         return AIRecommendationResponse(
-            answer="\\n".join(lines),
+            answer="\n".join(lines),
             model="tfidf-content-matcher",
             evidence_note="Local TF-IDF NLP fallback. It ranks text relevance only; community notes may be unverified and illustrative indicators are not factual assessments.",
         )
