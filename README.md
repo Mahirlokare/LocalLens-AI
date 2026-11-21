@@ -79,3 +79,16 @@ See the [API reference](docs/API_REFERENCE.md) and [deployment and production ch
 | Public transport (bus, metro, train) | Google Maps Transit handoff | Itinerary, schedule and fares are provider-supplied; no native GTFS engine or fare calculation in LocalLens |
 
 The neighbourhood catalogue remains a small sample dataset; the India-wide basemap and place search do not imply that verified neighbourhood indicators exist for every Indian locality. Return-ride links are booking-provider handoffs only; users must review pickup/drop-off, availability and final prices in the provider app.
+
+
+## AI Locality Advisor
+
+The workspace includes an **AI Locality Advisor** page. It sends the user's question, optional monthly budget, selected priorities, and up to 40 catalogue locality records to the FastAPI backend.
+
+- **Free default:** a local TF-IDF content-matching NLP fallback ranks available locality text against the user's question and priorities. This is text relevance, not a prediction of neighbourhood quality.
+- **Optional generative AI:** configure `GEMINI_API_KEY` on the backend service to use the Gemini model. The default model is `gemini-2.5-flash`; override it with `GEMINI_MODEL`.
+- The Gemini key is read only by the backend and must never be placed in frontend environment variables.
+- The assistant must disclose missing evidence and must not treat illustrative demo indicators or community-submitted notes as verified facts.
+- Budget fit is not scored until the catalogue contains reliable, source-labelled housing-cost data.
+
+Backend endpoint: `POST /v1/ai/recommendations`.
