@@ -4,6 +4,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routes.ai import router as ai_router
 from app.api.routes.comparisons import router as comparisons_router
 from app.api.routes.places import router as places_router
 from app.api.routes.neighbourhoods import router as neighbourhoods_router
@@ -31,6 +32,7 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
+app.include_router(ai_router, prefix=settings.api_v1_prefix)
 app.include_router(comparisons_router, prefix=settings.api_v1_prefix)
 app.include_router(places_router, prefix=settings.api_v1_prefix)
 app.include_router(neighbourhoods_router, prefix=settings.api_v1_prefix)
