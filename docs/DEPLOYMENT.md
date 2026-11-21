@@ -76,3 +76,17 @@ The neighbourhood catalogue contains illustrative sample scores only. Replace th
 The Supabase project stores neighbourhoods, indicators and user-scoped saved-comparison records. Row-level security is enabled; anonymous users can read the public catalogue, while saved comparisons are restricted to their authenticated owner. The current UI does not yet expose every database capability.
 
 Before a high-traffic public production launch, replace the community demo geocoder/router/tile infrastructure with providers or self-hosted services that offer an appropriate availability commitment; add caching, rate limiting, monitoring, backups, privacy/terms pages, accessibility review and a security review. Verify the deployed Supabase magic-link redirect allow-list and backend CORS origins. Replace illustrative neighbourhood indicators with verified, licensed, timestamped datasets before presenting factual area ratings. A grounded generative-AI assistant is not part of the current release and would require an approved model provider, API credential, safety evaluation and budget. Build frontend using `npm run build`.
+
+
+## Supabase email magic-link setup
+
+The frontend requests a Supabase magic link and redirects back to the production site. For production email sign-in:
+
+1. Open the [Supabase Auth URL Configuration](https://supabase.com/dashboard/project/rdgeiolxvbojassxhezh/auth/url-configuration).
+2. Set the **Site URL** to `https://locallens-ai-frontend.onrender.com`.
+3. Add `https://locallens-ai-frontend.onrender.com` to **Additional Redirect URLs**. Keep localhost redirect entries for local development if needed.
+4. Open [Supabase Auth SMTP Settings](https://supabase.com/dashboard/project/rdgeiolxvbojassxhezh/auth/smtp) and configure a verified custom SMTP sender (for example, Resend, Brevo, Postmark or AWS SES). Do not put SMTP credentials in frontend code or commit them to GitHub.
+5. Test with an address you control. Check inbox, spam/junk and the provider's delivery logs. A link is single-use and must be opened before it expires.
+
+Supabase's built-in email sender is intended for limited testing and has strict delivery/rate restrictions. A successful request from the browser does not guarantee delivery to every recipient. Custom SMTP is required for dependable public sign-in. If the email arrives but the link redirects incorrectly, re-check the Site URL, Additional Redirect URLs and the Supabase email template's redirect variable.
+
