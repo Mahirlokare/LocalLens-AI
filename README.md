@@ -53,7 +53,7 @@ Open http://localhost:5173.
 ### Docker
 From repository root: `docker compose up --build`.
 
-See [deployment and production checklist](docs/DEPLOYMENT.md).
+See the [API reference](docs/API_REFERENCE.md) and [deployment and production checklist](docs/DEPLOYMENT.md).
 
 
 ## India-wide maps and route planning
