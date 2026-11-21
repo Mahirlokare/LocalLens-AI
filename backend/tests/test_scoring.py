@@ -49,13 +49,14 @@ def test_missing_indicator_is_not_treated_as_zero():
                     "indicators": {
                         "healthcare": {"value": 80, "source": "dataset-a", "observed_at": "2026-11-01"}
                     },
-                }
+                },
+                {"name": "Area B", "indicators": {}},
             ],
         }
     )
 
     result = calculate_comparison(payload)
-    score = result.scores[0]
+    score = next(item for item in result.scores if item.name == "Area A")
 
     assert score.score == 80.0
     assert score.coverage == 50.0
