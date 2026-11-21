@@ -30,7 +30,7 @@ async def recommend_localities(payload: AIRecommendationRequest) -> AIRecommenda
             )
             documents.append(f"{area.name} {area.city} {area.description} {indicator_text}".strip())
 
-        if not any(doc.strip() for doc in documents):
+        if not any(area.description.strip() or area.indicators for area in payload.localities):
             return AIRecommendationResponse(
                 answer="I don't have enough locality descriptions or indicator evidence to recommend an area yet. Add source-labelled locality information first, then ask again.",
                 model="tfidf-content-matcher",
