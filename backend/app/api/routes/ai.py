@@ -3,6 +3,8 @@
 import os
 
 import httpx
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.ai import AIRecommendationRequest, AIRecommendationResponse
@@ -16,9 +18,54 @@ async def recommend_localities(payload: AIRecommendationRequest) -> AIRecommenda
     """Generate preference-aware advice grounded only in supplied locality context."""
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
     if not api_key:
-        raise HTTPException(
-            status_code=503,
-            detail="AI assistant is not configured yet. Add GEMINI_API_KEY to the backend environment.",
+        # Free, local NLP fallback: TF-IDF matches the user's priorities to available
+        # locality descriptions. It does not invent missing amenities or measurements.
+        query_text = " ".join([payload.question, *payload.priorities])
+        documents = []
+        for area in payload.localities:
+            indicator_text = " ".join(
+                f"{key} {item.get('source', '')}"
+                for key, item in area.indicators.items()
+                if isinstance(item, dict)
+            )
+            documents.append(f"{area.name} {area.city} {area.description} {indicator_text}".strip())
+
+        if not any(doc.strip() for doc in documents):
+            return AIRecommendationResponse(
+                answer="I don't have enough locality descriptions or indicator evidence to recommend an area yet. Add source-labelled locality information first, then ask again.",
+                model="tfidf-content-matcher",
+                evidence_note="Local NLP fallback; no usable locality text was supplied.",
+            )
+
+        vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2))
+        matrix = vectorizer.fit_transform([query_text, *documents])
+        similarities = cosine_similarity(matrix[0:1], matrix[1:]).ravel()
+        ranked = sorted(zip(payload.localities, similarities), key=lambda item: item[1], reverse=True)
+        lines = [
+            "I matched your question and priorities against the locality descriptions currently available. This is a text-relevance ranking, not a prediction of neighbourhood quality."
+        ]
+        useful = [(area, float(score)) for area, score in ranked if score > 0]
+        if not useful:
+            lines.append("I could not find a meaningful text match. The catalogue does not yet contain enough relevant information for your stated priorities.")
+        else:
+            lines.append("Most relevant catalogue matches:")
+            for area, score in useful[:5]:
+                lines.append(f"• {area.name} ({area.city}) — text relevance {score:.2f}.")
+                if area.description:
+                    lines.append(f"  Available notes: {area.description[:220]}")
+                if area.indicators:
+                    lines.append("  Indicator sources: " + ", ".join(
+                        f"{key}: {value.get('source', 'source not supplied')}"
+                        for key, value in area.indicators.items()
+                        if isinstance(value, dict)
+                    ))
+                else:
+                    lines.append("  No structured indicator measurements are available.")
+        lines.append("Budget fit cannot be assessed because verified rent or housing-cost data is not part of the current catalogue.")
+        return AIRecommendationResponse(
+            answer="\\n".join(lines),
+            model="tfidf-content-matcher",
+            evidence_note="Local TF-IDF NLP fallback. It ranks text relevance only; community notes may be unverified and illustrative indicators are not factual assessments.",
         )
 
     model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
