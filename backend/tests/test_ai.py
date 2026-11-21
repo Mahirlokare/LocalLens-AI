@@ -46,4 +46,4 @@ def test_local_tfidf_fallback_discloses_missing_evidence(monkeypatch):
     result = asyncio.run(recommend_localities(payload))
 
     assert result.model == "tfidf-content-matcher"
-    assert "not have enough" in result.answer
+    assert "don't have enough" in result.answer
