@@ -71,3 +71,36 @@ def test_weights_must_sum_to_one():
                 "neighbourhoods": [{"name": "Area A", "indicators": {}}],
             }
         )
+
+
+def test_comparison_requires_at_least_two_localities():
+    """The scoring API should reject a single-locality comparison."""
+    with pytest.raises(ValidationError):
+        ComparisonScoreRequest.model_validate({
+            "weights": {"healthcare": 1.0},
+            "neighbourhoods": [{"name": "Area A", "indicators": {}}],
+        })
+
+
+def test_comparison_rejects_more_than_three_localities():
+    """The API enforces the same three-locality cap as the interface."""
+    with pytest.raises(ValidationError):
+        ComparisonScoreRequest.model_validate({
+            "weights": {"healthcare": 1.0},
+            "neighbourhoods": [
+                {"name": f"Area {index}", "indicators": {}}
+                for index in range(4)
+            ],
+        })
+
+
+def test_comparison_rejects_duplicate_localities():
+    """The same locality cannot be counted twice in one comparison."""
+    with pytest.raises(ValidationError):
+        ComparisonScoreRequest.model_validate({
+            "weights": {"healthcare": 1.0},
+            "neighbourhoods": [
+                {"name": "Area A", "indicators": {}},
+                {"name": " area a ", "indicators": {}},
+            ],
+        })
